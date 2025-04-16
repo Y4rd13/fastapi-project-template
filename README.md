@@ -52,10 +52,15 @@ docker-compose up --build
 
 ```bash
 .
+├── .env
+├── .gitignore
+├── .dockerignore
 ├── docker-compose.yaml
 ├── Dockerfile
 ├── README.md
 ├── requirements.txt
+├── pytest
+│   └── test_api.py
 ├── scripts
 │   ├── generate_secret.py
 │   └── test_cuda.py
