@@ -24,33 +24,33 @@ This is a FastAPI project template designed to be the foundational base for all 
 
 1. **Clone the Repository:**
 
-$$$bash
+```bash
 git clone https://github.com/your_username/fastapi-project-template.git
-$$$
+```
 
 2. **Install Dependencies:**
 
-$$$bash
+```bash
 pip install -r requirements.txt
-$$$
+```
 
 3. **Run the Application Locally:**
 
 To run the FastAPI application using Uvicorn:
 
-$$$bash
+```bash
 uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
-$$$
+```
 
 Or, to run the application inside Docker using Docker Compose:
 
-$$$bash
+```bash
 docker-compose up --build
-$$$
+```
 
 ### Project Structure
 
-$$$bash
+```bash
 .
 ├── docker-compose.yaml
 ├── Dockerfile
@@ -86,16 +86,16 @@ $$$bash
         ├── auth_utils.py
         ├── __init__.py
         └── mongo_utils.py
-$$$
+```
 
 ### Configuration
 
 Sensitive configurations are managed via environment variables. Create a `.env` file at the root of the project (or use a secrets manager in production) with content similar to:
 
-$$$bash
+```bash
 SECRET_KEY="your_secret_key_here"
 MONGO_URI="mongodb://localhost:27017/your_db_name"
-$$$
+```
 
 Additional environment variables are defined in the Docker Compose file and can be adjusted as needed.
 
@@ -112,9 +112,9 @@ A GitHub Actions workflow template is provided in `.github/workflows/sv_deploy.y
 
 Unit and integration tests are located in the `tests/` directory. You can run tests with:
 
-$$$bash
+```bash
 pytest
-$$$
+```
 
 ## Contributing
 
