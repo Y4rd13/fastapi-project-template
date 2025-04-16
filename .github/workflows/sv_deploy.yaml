@@ -1,0 +1,60 @@
+name: CI/CD Pipeline FastAPI Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Production Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: patch  # opciones: major, minor, patch, norelease
+          tag_prefix: v
+          release_name: "v<RELEASE_VERSION>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+
+      - name: Set up Git credentials
+        run: |
+          git config --global credential.helper store
+          git config --global user.email "${{ secrets.GH_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_USER }}"
+          echo "https://${{ secrets.GH_PAT }}:x-oauth-basic@github.com" > ~/.git-credentials
+
+      - name: Sync repository with production server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_HOST "\
+            cd ~/fastapi-project-template && \
+            git config remote.origin.url 'https://${{ secrets.GH_PAT }}@github.com/${{ secrets.GH_USER }}/fastapi-project-template' && \
+            git pull origin main"
+
+      - name: Restart Docker containers
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SERVER_USER@$SERVER_HOST "\
+            cd ~/fastapi-project-template && \
+            docker-compose down && \
+            docker-compose up --build -d"

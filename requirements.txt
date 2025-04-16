@@ -1,0 +1,14 @@
+fastapi[all]
+python-dotenv
+uvicorn[standard]
+pydantic
+pydantic-settings
+celery
+flower
+redis
+gevent
+requests
+python-multipart
+pymongo
+python-jose[cryptography]
+passlib[bcrypt]

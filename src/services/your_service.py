@@ -1,0 +1,2 @@
+class YourService:
+    pass
