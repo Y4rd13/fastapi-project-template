@@ -23,7 +23,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
       
-      # Uncomment the following steps if you want to deploy to a production server using SSH and Docker
+      #######################################################################################################
+      ### Uncomment the following steps if you want to deploy to a production server using SSH and Docker ###
+      #######################################################################################################
       # - name: Setup SSH
       #   run: |
       #     mkdir -p ~/.ssh
