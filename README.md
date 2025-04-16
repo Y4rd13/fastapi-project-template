@@ -25,7 +25,7 @@ This is a FastAPI project template designed to be the foundational base for all 
 1. **Clone the Repository:**
 
 ```bash
-git clone https://github.com/your_username/fastapi-project-template.git
+git clone https://github.com/Y4rd13/fastapi-project-template.git
 ```
 
 2. **Install Dependencies:**
@@ -97,7 +97,65 @@ SECRET_KEY="your_secret_key_here"
 MONGO_URI="mongodb://localhost:27017/your_db_name"
 ```
 
-Additional environment variables are defined in the Docker Compose file and can be adjusted as needed.
+Both the secret key and the hashed password can be generated using the script in `scripts/generate_secret.py`.
+
+### Creating a Superuser in MongoDB
+
+To initialize your user database, you should create a superuser with the following schema:
+
+```python
+from pydantic import BaseModel
+from typing import Union
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Union[str, None] = None
+
+class User(BaseModel):
+    username: str
+    email: Union[str, None] = None
+    disabled: Union[bool, None] = None
+
+class UserInDB(User):
+    hashed_password: str
+    is_active: bool
+    is_staff: bool
+    is_superuser: bool
+```
+
+The first superuser should have:
+
+* username: a unique identifier
+* email: contact email address
+* hashed_password: generated via scripts/generate_secret.py
+* is_active: True
+* is_staff: True
+* is_superuser: True
+
+Superuser (using the UserInDB schema):
+```json
+{
+  "username": "admin",
+  "email": "admin@example.com",
+  "disabled": false,
+  "hashed_password": "hashed_password_value_here",
+  "is_active": true,
+  "is_staff": true,
+  "is_superuser": true
+}
+```
+
+Regular User (using the User schema):
+```json
+{
+  "username": "johndoe",
+  "email": "johndoe@example.com",
+  "disabled": false
+}
+```
 
 ### CI/CD Deployment
 
