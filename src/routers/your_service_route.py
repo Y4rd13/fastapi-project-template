@@ -4,7 +4,7 @@ from services.your_service import YourService
 
 router = APIRouter()
 
-@router.post("/recommendation", summary="Get job recommendation", response_model=ResponseTemplate)
+@router.post("/your_service_router", summary="This is an example for a summary for your service.", response_model=ResponseTemplate)
 def get_recommendation(data: RequestTemplate):
     """
     This endpoint is a Placeholder, replace with the actual implementation.

@@ -35,7 +35,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code
 COPY . .
-COPY known_faces /app/known_faces
 
 # Expose the application port
 EXPOSE 8000
