@@ -7,6 +7,7 @@ from routers import (
 )
 from utils.auth_utils import get_current_user
 from src.core.logger_func import logger
+from utils.api_key import get_api_key # In case you want to use API key authentication instead of JWT, otherwise remove this line.
 #from scripts.test_cuda import check_cuda
 
 app = FastAPI(
@@ -20,8 +21,9 @@ app = FastAPI(
 app.include_router(health.router, tags=["health"])
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
-# Test routes without JWT
-#app.include_router(your_service_route.router, prefix="/test/v1", tags=["test-service"])
+# Test routes with API key authentication
+# In case you want to use API key authentication instead of JWT, otherwise remove this line.
+app.include_router(your_service_route.router, prefix="/test/v1", tags=["test-service"], dependencies=[Depends(get_api_key)])
 
 v1_routers = [
     your_service_route.router,

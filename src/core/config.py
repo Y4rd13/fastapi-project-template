@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Project Template API"
     PROJECT_VERSION: str = "1.0.0"  # (major.minor.patch)
     SECRET_KEY: str = os.getenv("SECRET_KEY")
+    API_KEY: str = os.getenv("API_KEY") # In case you want to use API key authentication instead of JWT, otherwise remove this line.
 
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL")
     CELERY_RESULT_BACKEND: str = os.getenv("CELERY_RESULT_BACKEND")
