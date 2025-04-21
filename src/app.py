@@ -6,8 +6,8 @@ from routers import (
     your_service_route
 )
 from utils.auth_utils import get_current_user
-from src.core.logger_func import logger
 from utils.api_key import get_api_key # In case you want to use API key authentication instead of JWT, otherwise remove this line.
+from src.core.logger_func import logger
 #from scripts.test_cuda import check_cuda
 
 app = FastAPI(
