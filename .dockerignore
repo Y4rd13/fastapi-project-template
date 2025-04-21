@@ -24,3 +24,7 @@ prompt.txt
 # Exclude unnecessary OS files
 .DS_Store
 Thumbs.db
+
+# Exclude Docker files
+docker-compose.yml
+Dockerfile
