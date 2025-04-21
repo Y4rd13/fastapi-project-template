@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# --- system deps -----------------------------------------------------------
+# install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential        \
@@ -12,22 +12,24 @@ RUN apt-get update && \
         python3-venv           && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# --- Python virtualenv -----------------------------------------------------
+# create and activate virtualenv
 RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:${PATH}" \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PYTHONPATH="/app/src"
 
-# Upgrade pip
-RUN pip install --upgrade pip
+# Environment variables to optimize Python and pip behavior
+ENV PATH="/opt/venv/bin:${PATH}"
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PYTHONPATH="/app/src"
 
-# --- deps ------------------------------------------------------------------
+# upgrade pip without cache
+RUN python3 -m pip install --no-cache-dir --upgrade pip
+
+# install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# --- code ------------------------------------------------------------------
+# copy application code
 COPY . .
 
 EXPOSE 8000
