@@ -4,82 +4,27 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: app_container_name-api
-    #runtime: nvidia
     environment:
-      # - NVIDIA_VISIBLE_DEVICES=all
-      # - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - PYTHONPATH=/app/src
       - CELERY_BROKER_URL=redis://:redis-password-here@redis:6379/0
       - CELERY_RESULT_BACKEND=redis://:redis-password-here@redis:6379/0
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
     ports:
       - "8000:8000"
     volumes:
       - .:/app
-    depends_on:
-      - redis
     networks:
       - shared-network
-
-  # worker:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.worker
-  #   container_name: celery-worker-transcription-service
-  #   runtime: nvidia
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #     - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #     - PYTHONPATH=/app/src
-  #     - CELERY_BROKER_URL=redis://:redis-password-here@redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://:redis-password-here@redis:6379/0
-  #   volumes:
-  #     - .:/app
-  #   depends_on:
-  #     - redis
-  #   networks:
-  #     - shared-network
-
-  # flower:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.worker
-  #   container_name: flower
-  #   command: celery -A src.services.tasks flower --port=5555
-  #   environment:
-  #     - FLOWER_BASIC_AUTH=admin:your-password-here
-  #     - CELERY_BROKER_URL=redis://redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  #   ports:
-  #     - "5556:5555"
-  #   depends_on:
-  #     - redis
-  #     - worker
-
-  redis:
-    image: redis:5-alpine
-    container_name: redis-server
-    command: redis-server --requirepass "redis-password-here" 
-    volumes:
-      - redis:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    init: true
-    networks:
-      - shared-network
-
-volumes:
-  redis:
-
+    # Use watch only in development:
+    # see: https://docs.astral.sh/uv/guides/integration/docker/#configuring-watch-with-docker-compose
+    # develop:
+    #   watch:
+    #     - action: sync
+    #       path: .
+    #       target: /app
+    #       ignore:
+    #         - .venv/
+    #     - action: rebuild
+    #       path: ./pyproject.toml
 networks:
   shared-network:
     driver: bridge

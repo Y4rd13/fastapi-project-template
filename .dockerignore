@@ -28,3 +28,4 @@ Thumbs.db
 # Exclude Docker files
 docker-compose.yml
 Dockerfile
+docker/*
