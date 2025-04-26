@@ -1,36 +1,31 @@
-FROM python:3.10-slim
+FROM ghcr.io/astral-sh/uv:python3.10-bookworm-slim
 
 WORKDIR /app
 
-# install system dependencies
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        build-essential        \
-        git git-lfs            \
-        libgl1-mesa-glx        \
-        libglib2.0-0           \
-        python3-venv           && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+        build-essential git git-lfs libgl1-mesa-glx libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/*
 
-# create and activate virtualenv
-RUN python3 -m venv /opt/venv
+# Environment configuration
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_SYSTEM_PYTHON=1 \
+    UV_COMPILE_BYTECODE=1 \
+    PYTHONPATH=/app/src
 
-# Environment variables to optimize Python and pip behavior
-ENV PATH="/opt/venv/bin:${PATH}"
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PIP_NO_CACHE_DIR=1
-ENV PYTHONPATH="/app/src"
+# Copy project manifest
+COPY pyproject.toml ./
 
-# upgrade pip without cache
-RUN python3 -m pip install --no-cache-dir --upgrade pip
+# Install dependencies and generate uv.lock
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system --no-cache-dir -r pyproject.toml
 
-# install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# copy application code
+# Copy application source
 COPY . .
 
 EXPOSE 8000
+
+# Start the application
 CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
